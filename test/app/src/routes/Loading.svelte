@@ -2,9 +2,9 @@
 
 <p id="pleasewait">Please wait…</p>
 {#if params && params.message}
-    <p id="loadingmessage">Message is {params.message}</p>
+	<p id="loadingmessage">Message is {params.message}</p>
 {/if}
 
 <script>
-export let params = null
+	export let params = null
 </script>

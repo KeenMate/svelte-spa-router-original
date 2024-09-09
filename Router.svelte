@@ -2,7 +2,7 @@
 	import {derived, readable, writable} from "svelte/store"
 	import {tick} from "svelte"
 	import {BasePath, HashRoutingEnabled, SvelteSPARouterNavigationEvent} from "./constants.js"
-	import {joinPaths} from "../../helpers/url-helpers.js"
+	import {joinPaths} from "./helpers/url-helpers.js"
 
 	/**
 	 * Returns the current location from the hash.
@@ -12,11 +12,12 @@
 	 */
 	function getLocation() {
 		let location
+
 		if (HashRoutingEnabled) {
 			const hashPosition = window.location.href.indexOf("#/")
-			location           = (hashPosition > -1)
-				? window.location.href.substr(hashPosition + 1)
-				: "/"
+			location           = (hashPosition > -1) ?
+				window.location.href.substr(hashPosition + 1) :
+				"/"
 		} else {
 			const startsWithPrefix = window.location.pathname.startsWith(BasePath)
 			if (!HashRoutingEnabled && !startsWithPrefix) {
@@ -46,9 +47,9 @@
 		function start(set) {
 			set(getLocation())
 
-			const eventName = HashRoutingEnabled
-				? "hashchange"
-				: SvelteSPARouterNavigationEvent
+			const eventName = HashRoutingEnabled ?
+				"hashchange" :
+				SvelteSPARouterNavigationEvent
 			console.log("Setting loc")
 			const update = () => {
 				console.log("Updating location", getLocation())
@@ -137,9 +138,9 @@
 			__svelte_spa_router_scrollY: window.scrollY
 		}
 
-		const doNavigate = shouldReplace
-			? window.history.replaceState.bind(window.history)
-			: window.history.pushState.bind(window.history)
+		const doNavigate = shouldReplace ?
+			window.history.replaceState.bind(window.history) :
+			window.history.pushState.bind(window.history)
 
 		if (HashRoutingEnabled) {
 			// Note: this will include scroll state in history even when restoreScrollState is false

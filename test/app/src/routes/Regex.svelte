@@ -3,5 +3,5 @@
 <p>Match is: <code id="regexmatch">{JSON.stringify(params)}</code></p>
 
 <script>
-export let params = {}
+	export let params = {}
 </script>

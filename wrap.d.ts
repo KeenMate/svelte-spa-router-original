@@ -1,28 +1,28 @@
-import {ComponentType} from 'svelte'
-import {AsyncSvelteComponent, RoutePrecondition, WrappedComponent} from './Router'
+import {ComponentType} from "svelte"
+import {AsyncSvelteComponent, RoutePrecondition, WrappedComponent} from "./Router"
 
 /** Options object for the call to `wrap` */
 export interface WrapOptions {
-    /** Svelte component to load (this is incompatible with `asyncComponent`) */
-    component?: ComponentType
+	/** Svelte component to load (this is incompatible with `asyncComponent`) */
+	component?: ComponentType
 
-    /** Function that returns a Promise that fulfills with a Svelte component (e.g. `{asyncComponent: () => import('Foo.svelte')}`)  */
-    asyncComponent?: AsyncSvelteComponent
+	/** Function that returns a Promise that fulfills with a Svelte component (e.g. `{asyncComponent: () => import('Foo.svelte')}`)  */
+	asyncComponent?: AsyncSvelteComponent
 
-    /** Svelte component to be displayed while the async route is loading (as a placeholder); when unset or false-y, no component is shown while component */
-    loadingComponent?: ComponentType
+	/** Svelte component to be displayed while the async route is loading (as a placeholder); when unset or false-y, no component is shown while component */
+	loadingComponent?: ComponentType
 
-    /** Optional dictionary passed to the `loadingComponent` component as params (for an exported prop called `params`) */
-    loadingParams?: object
+	/** Optional dictionary passed to the `loadingComponent` component as params (for an exported prop called `params`) */
+	loadingParams?: object
 
-    /** Optional object that will be passed to events such as `routeLoading`, `routeLoaded`, `conditionsFailed` */
-    userData?: object
+	/** Optional object that will be passed to events such as `routeLoading`, `routeLoaded`, `conditionsFailed` */
+	userData?: object
 
-    /** Optional key-value dictionary of static props that will be passed to the component. The props are expanded with {...props}, so the key in the dictionary becomes the name of the prop. */
-    props?: object
+	/** Optional key-value dictionary of static props that will be passed to the component. The props are expanded with {...props}, so the key in the dictionary becomes the name of the prop. */
+	props?: object
 
-    /** Route pre-conditions to add, which will be executed in order */
-    conditions?: RoutePrecondition[] | RoutePrecondition
+	/** Route pre-conditions to add, which will be executed in order */
+	conditions?: RoutePrecondition[] | RoutePrecondition
 }
 
 /**
@@ -37,4 +37,5 @@ export interface WrapOptions {
  * @returns Wrapped component
  */
 export function wrap(args: WrapOptions): WrappedComponent
+
 export default wrap
