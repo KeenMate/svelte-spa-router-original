@@ -1,7 +1,7 @@
 {
 	"name": "@keenmate/svelte-spa-router",
 	"private": false,
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Router for SPAs using Svelte 4",
 	"main": "Router.svelte",
 	"svelte": "Router.svelte",
