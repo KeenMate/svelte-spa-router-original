@@ -1,7 +1,7 @@
 ///<reference types="svelte" />
 
 import {ComponentType, SvelteComponent} from "svelte"
-import {Readable} from "svelte/store"
+import {Readable, Writable} from "svelte/store"
 
 /** Dictionary with route details passed to the pre-conditions functions, as well as the `routeLoading` and `conditionsFailed` events */
 export interface RouteDetail {
@@ -130,6 +130,17 @@ interface Location {
 	/** Querystring from the hash, as a string not parsed */
 	querystring?: string
 }
+
+/**
+ * Store to configure whether the router operates on routes hidden behind # or not
+ */
+export const HashRoutingEnabled: Writable<boolean>
+
+/**
+ * Used when hash-based routing is disabled and in normal scenario should be filled with `import.meta.env.BASE_URL` (in case of Vite app)
+ * A '/' prefixed path that will be excluded from URL when dealing with route navigation
+ */
+export const BasePath: Writable<string>
 
 /**
  * Readable store that returns the current full location (incl. querystring)

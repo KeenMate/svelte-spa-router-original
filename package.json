@@ -18,6 +18,9 @@
 		".": {
 			"types": "./Router.d.ts",
 			"svelte": "./Router.svelte"
+		},
+		"./*": {
+			"import": "./*"
 		}
 	},
 	"scripts": {

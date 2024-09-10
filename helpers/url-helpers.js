@@ -1,4 +1,5 @@
-import {BasePath} from "../packages/svelte-spa-router/constants.js"
+import {BasePath} from "../Router.svelte"
+import {get} from "svelte/store"
 
 /**
  * @typedef {Object} Location
@@ -7,7 +8,7 @@ import {BasePath} from "../packages/svelte-spa-router/constants.js"
  */
 export function joinPaths(...paths) {
 	if (!paths || !paths.length) {
-		return BasePath
+		return get(BasePath)
 	}
 
 	return paths
