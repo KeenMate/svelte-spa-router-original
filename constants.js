@@ -1,1 +1,1 @@
-export const SvelteSPARouterNavigationEvent = "popstate"
+export const SvelteSPARouterNavigationEvent = 'popstate'

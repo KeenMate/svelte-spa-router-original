@@ -1,6 +1,6 @@
-import {parse} from "regexparam"
-import {BasePath, HashRoutingEnabled, loc} from "./Router.svelte"
-import {get} from "svelte/store"
+import {parse} from 'regexparam'
+import {BasePath, HashRoutingEnabled, loc} from './Router.svelte'
+import {get} from 'svelte/store'
 
 // List of nodes to update
 const nodes = []
@@ -16,7 +16,7 @@ function checkActive(el) {
 }
 
 function toggleClasses(el, className, shouldAdd) {
-	(className || "").split(" ").forEach((cls) => {
+	(className || '').split(' ').forEach((cls) => {
 		if (!cls) {
 			return
 		}
@@ -33,7 +33,7 @@ function toggleClasses(el, className, shouldAdd) {
 // Listen to changes in the location
 loc.subscribe((value) => {
 	// Update the location
-	location = value.location + (value.querystring ? "?" + value.querystring : "")
+	location = value.location + (value.querystring ? '?' + value.querystring : '')
 
 	// Update all nodes
 	nodes.map(checkActive)
@@ -56,25 +56,27 @@ export default function active(node, opts) {
 	const basePath = get(BasePath)
 
 	// Check options
-	if (opts && (typeof opts == "string" || (typeof opts == "object" && opts instanceof RegExp))) {
+	if (opts && (typeof opts == 'string' || (typeof opts == 'object' && opts instanceof RegExp))) {
 		// Interpret strings and regular expressions as opts.path
 		opts = {
 			path: opts
 		}
-	} else {
+	}
+	else {
 		// Ensure opts is a dictionary
 		opts = opts || {}
 	}
 
 	// Path defaults to link target
-	if (!opts.path && node.hasAttribute("href")) {
-		opts.path = node.getAttribute("href")
+	if (!opts.path && node.hasAttribute('href')) {
+		opts.path = node.getAttribute('href')
 
 		if (get(HashRoutingEnabled)) {
-			if (opts.path && opts.path.length > 1 && opts.path.charAt(0) == "#") {
+			if (opts.path && opts.path.length > 1 && opts.path.charAt(0) == '#') {
 				opts.path = opts.path.substring(1)
 			}
-		} else {
+		}
+		else {
 			if (opts.path.startsWith(basePath)) {
 				opts.path = opts.path.substring(basePath.length)
 			}
@@ -83,18 +85,18 @@ export default function active(node, opts) {
 
 	// Default class name
 	if (!opts.className) {
-		opts.className = "active"
+		opts.className = 'active'
 	}
 
 	// If path is a string, it must start with '/' or '*'
 	if (!opts.path ||
-		typeof opts.path == "string" && (opts.path.length < 1 || (opts.path.charAt(0) != "/" && opts.path.charAt(0) != "*"))
+		typeof opts.path == 'string' && (opts.path.length < 1 || (opts.path.charAt(0) != '/' && opts.path.charAt(0) != '*'))
 	) {
-		throw Error("Invalid value for \"path\" argument")
+		throw Error('Invalid value for "path" argument')
 	}
 
 	// If path is not a regular expression already, make it
-	const {pattern} = typeof opts.path == "string" ?
+	const {pattern} = typeof opts.path == 'string' ?
 		parse(opts.path) :
 		{pattern: opts.path}
 

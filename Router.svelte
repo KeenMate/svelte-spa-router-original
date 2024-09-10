@@ -1,11 +1,11 @@
 <script context="module">
-	import {derived, get, readable, writable} from "svelte/store"
-	import {tick} from "svelte"
-	import {SvelteSPARouterNavigationEvent} from "./constants.js"
-	import {joinPaths} from "./helpers/url-helpers.js"
+	import {derived, get, readable, writable} from 'svelte/store'
+	import {tick} from 'svelte'
+	import {SvelteSPARouterNavigationEvent} from './constants.js'
+	import {joinPaths} from './helpers/url-helpers.js'
 
 	export const HashRoutingEnabled = writable(true)
-	export const BasePath           = writable("/")
+	export const BasePath           = writable('/')
 
 	/**
 	 * Returns the current location from the hash.
@@ -15,26 +15,28 @@
 	 */
 	function getLocation() {
 		const hashRoutingEnabled = get(HashRoutingEnabled)
-		const basePath = get(BasePath)
+		const basePath           = get(BasePath)
 		let location
 
 		if (hashRoutingEnabled) {
-			const hashPosition = window.location.href.indexOf("#/")
+			const hashPosition = window.location.href.indexOf('#/')
 			location           = (hashPosition > -1) ?
 				window.location.href.substr(hashPosition + 1) :
-				"/"
-		} else {
+				'/'
+		}
+		else {
 			const startsWithPrefix = window.location.pathname.startsWith(basePath)
 			if (!hashRoutingEnabled && !startsWithPrefix) {
-				throw new Error(`Hash routing disabled and location: "${window.location.href}" does not start with expected base path: "${get(BasePath)}"`)
+				throw new Error(`Hash routing disabled and location: "${window.location.href}" does not start with expected base path: "${get(
+					BasePath)}"`)
 			}
 
-			location = "/" + window.location.pathname.substring(basePath.length)
+			location = '/' + window.location.pathname.substring(basePath.length)
 		}
 
 		// Check if there's a querystring
-		const qsPosition = location.indexOf("?")
-		let querystring  = ""
+		const qsPosition = location.indexOf('?')
+		let querystring  = ''
 		if (qsPosition > -1) {
 			querystring = location.substr(qsPosition + 1)
 			location    = location.substr(0, qsPosition)
@@ -53,11 +55,11 @@
 			set(getLocation())
 
 			const eventName = get(HashRoutingEnabled) ?
-				"hashchange" :
+				'hashchange' :
 				SvelteSPARouterNavigationEvent
-			console.log("Setting loc")
+			console.log('Setting loc')
 			const update = () => {
-				console.log("Updating location", getLocation())
+				console.log('Updating location', getLocation())
 				set(getLocation())
 			}
 			window.addEventListener(eventName, update, false)
@@ -125,15 +127,16 @@
 
 	async function jediForcePush(location, shouldReplace = false) {
 		const hashRoutingEnabled = get(HashRoutingEnabled)
-		const basePath = get(BasePath)
+		const basePath           = get(BasePath)
 
 		if (hashRoutingEnabled) {
 			if (!location || location.length < 1 || !/^(\/|#\/)/.test(location)) {
-				throw Error("Invalid parameter location")
+				throw Error('Invalid parameter location')
 			}
-		} else {
+		}
+		else {
 			if (!location || location.length < 1 || !/^\//.test(location)) {
-				throw Error("Invalid parameter location")
+				throw Error('Invalid parameter location')
 			}
 		}
 
@@ -155,17 +158,19 @@
 			doNavigate(newHistoryState, undefined)
 
 			if (!shouldReplace) {
-				window.location.hash = (location.charAt(0) === "#" ? "" : "#") + location
-			} else {
-				window.dispatchEvent(new Event("hashchange"))
+				window.location.hash = (location.charAt(0) === '#' ? '' : '#') + location
 			}
-		} else {
+			else {
+				window.dispatchEvent(new Event('hashchange'))
+			}
+		}
+		else {
 			if (!location.startsWith(basePath)) {
 				location = joinPaths(basePath, location)
 			}
 
 			console.log(
-				"Before navigate",
+				'Before navigate',
 				window.history,
 				window.history.pushState,
 				doNavigate,
@@ -185,7 +190,7 @@
 	 * @typedef {Object} LinkActionOpts
 	 * @property {string} href - A string to use in place of the link's href attribute. Using this allows for updating link's targets reactively.
 	 * @property {boolean} disabled - If true, link is disabled
-	 * @property {boolean} shouldReplace - If true, link will replace instead of push new history entry
+	 * @property {boolean} replace - If true, link will replace instead of push new history entry
 	 */
 
 	/**
@@ -204,20 +209,20 @@
 		opts = linkOpts(opts)
 
 		// Only apply to <a> tags
-		if (!node || !node.tagName || node.tagName.toLowerCase() != "a") {
-			throw Error("Action \"link\" can only be used with <a> tags")
+		if (!node || !node.tagName || node.tagName.toLowerCase() != 'a') {
+			throw Error('Action "link" can only be used with <a> tags')
 		}
 
 		updateLink(node, opts)
 
 		if (!get(HashRoutingEnabled)) {
-			node.addEventListener("click", ev => {
+			node.addEventListener('click', ev => {
 				ev.stopImmediatePropagation()
 				ev.preventDefault()
 
-				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
+				const shouldReplace = typeof opts !== 'string' && opts.shouldReplace
 
-				jediForcePush(node.getAttribute("href"), shouldReplace)
+				jediForcePush(node.getAttribute('href'), shouldReplace)
 				window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
 			}, {capture: true})
 		}
@@ -239,7 +244,8 @@
 		// If this exists, then this is a back navigation: restore the scroll position
 		if (state) {
 			window.scrollTo(state.__svelte_spa_router_scrollX, state.__svelte_spa_router_scrollY)
-		} else {
+		}
+		else {
 			// Otherwise this is a forward navigation: scroll to top
 			window.scrollTo(0, 0)
 		}
@@ -249,38 +255,41 @@
 	function updateLink(node, opts) {
 		const basePath = get(BasePath)
 
-		let href = opts.href || node.getAttribute("href")
+		let href = opts.href || node.getAttribute('href')
 
 		if (get(HashRoutingEnabled)) {
-			if (href && href.charAt(0) == "/") {
+			if (href && href.charAt(0) == '/') {
 				// Add # to the href attribute
-				href = "#" + href
-			} else if (!href || href.length < 2 || href.slice(0, 2) != "#/") {
-				throw Error("Invalid value for \"href\" attribute: " + href)
+				href = '#' + href
 			}
-		} else {
+			else if (!href || href.length < 2 || href.slice(0, 2) != '#/') {
+				throw Error('Invalid value for "href" attribute: ' + href)
+			}
+		}
+		else {
 			if (href && !href.startsWith(basePath)) {
 				href = joinPaths(basePath, href)
 			}
 		}
 
-		node.setAttribute("href", href)
-		node.addEventListener("click", (event) => {
+		node.setAttribute('href', href)
+		node.addEventListener('click', (event) => {
 			// Prevent default anchor onclick behaviour
 			event.preventDefault()
 			if (!opts.disabled) {
-				scrollstateHistoryHandler(event.currentTarget.getAttribute("href"))
+				scrollstateHistoryHandler(event.currentTarget.getAttribute('href'))
 			}
 		})
 	}
 
 	// Internal function that ensures the argument of the link action is always an object
 	function linkOpts(val) {
-		if (val && typeof val == "string") {
+		if (val && typeof val == 'string') {
 			return {
 				href: val
 			}
-		} else {
+		}
+		else {
 			return val || {}
 		}
 	}
@@ -319,8 +328,8 @@
 {/if}
 
 <script>
-	import {onDestroy, createEventDispatcher, afterUpdate} from "svelte"
-	import {parse} from "regexparam"
+	import {onDestroy, createEventDispatcher, afterUpdate} from 'svelte'
+	import {parse} from 'regexparam'
 
 	/**
 	 * Dictionary of all routes, in the format `'/path': component`.
@@ -342,7 +351,7 @@
 	/**
 	 * Optional prefix for the routes in this router. This is useful for example in the case of nested routers.
 	 */
-	export let prefix = ""
+	export let prefix = ''
 
 	/**
 	 * If set to true, the router will restore scroll positions on back navigation
@@ -361,16 +370,16 @@
 		 * @param {SvelteComponent|WrappedComponent} component - Svelte component for the route, optionally wrapped
 		 */
 		constructor(path, component) {
-			if (!component || (typeof component != "function" && (typeof component != "object" || component._sveltesparouter !== true))) {
-				throw Error("Invalid component object")
+			if (!component || (typeof component != 'function' && (typeof component != 'object' || component._sveltesparouter !== true))) {
+				throw Error('Invalid component object')
 			}
 
 			// Path must be a regular or expression, or a string starting with '/' or '*'
 			if (!path ||
-				(typeof path == "string" && (path.length < 1 || (path.charAt(0) != "/" && path.charAt(0) != "*"))) ||
-				(typeof path == "object" && !(path instanceof RegExp))
+				(typeof path == 'string' && (path.length < 1 || (path.charAt(0) != '/' && path.charAt(0) != '*'))) ||
+				(typeof path == 'object' && !(path instanceof RegExp))
 			) {
-				throw Error("Invalid value for \"path\" argument - strings must start with / or *")
+				throw Error('Invalid value for "path" argument - strings must start with / or *')
 			}
 
 			const {pattern, keys} = parse(path)
@@ -378,12 +387,13 @@
 			this.path = path
 
 			// Check if the component is wrapped and we have conditions
-			if (typeof component == "object" && component._sveltesparouter === true) {
+			if (typeof component == 'object' && component._sveltesparouter === true) {
 				this.component  = component.component
 				this.conditions = component.conditions || []
 				this.userData   = component.userData
 				this.props      = component.props || {}
-			} else {
+			}
+			else {
 				// Convert the component to a function that returns a Promise, to normalize it
 				this.component  = () => Promise.resolve(component)
 				this.conditions = []
@@ -406,17 +416,20 @@
 			// If there's a prefix, check if it matches the start of the path.
 			// If not, bail early, else remove it before we run the matching.
 			if (prefix) {
-				if (typeof prefix == "string") {
+				if (typeof prefix == 'string') {
 					if (path.startsWith(prefix)) {
-						path = path.substr(prefix.length) || "/"
-					} else {
+						path = path.substr(prefix.length) || '/'
+					}
+					else {
 						return null
 					}
-				} else if (prefix instanceof RegExp) {
+				}
+				else if (prefix instanceof RegExp) {
 					const match = path.match(prefix)
 					if (match && match[0]) {
-						path = path.substr(match[0].length) || "/"
-					} else {
+						path = path.substr(match[0].length) || '/'
+					}
+					else {
 						return null
 					}
 				}
@@ -438,7 +451,7 @@
 			while (i < this._keys.length) {
 				// In the match parameters, URL-decode all values
 				try {
-					out[this._keys[i]] = decodeURIComponent(matches[i + 1] || "") || null
+					out[this._keys[i]] = decodeURIComponent(matches[i + 1] || '') || null
 				} catch (e) {
 					out[this._keys[i]] = null
 				}
@@ -482,7 +495,8 @@
 		routes.forEach((route, path) => {
 			routesList.push(new RouteItem(path, route))
 		})
-	} else {
+	}
+	else {
 		// We have an object, so iterate on its own properties
 		Object.keys(routes).forEach((path) => {
 			routesList.push(new RouteItem(path, routes[path]))
@@ -508,7 +522,7 @@
 	let previousScrollState = null
 
 	// Update history.scrollRestoration depending on restoreScrollState
-	$: history.scrollRestoration = restoreScrollState ? "manual" : "auto"
+	$: history.scrollRestoration = restoreScrollState ? 'manual' : 'auto'
 	let popStateChanged = null
 	if (restoreScrollState) {
 		popStateChanged = (event) => {
@@ -517,12 +531,13 @@
 			// navigation)
 			if (event.state && (event.state.__svelte_spa_router_scrollY || event.state.__svelte_spa_router_scrollX)) {
 				previousScrollState = event.state
-			} else {
+			}
+			else {
 				previousScrollState = null
 			}
 		}
 		// This is removed in the destroy() invocation below
-		window.addEventListener("popstate", popStateChanged)
+		window.addEventListener('popstate', popStateChanged)
 
 		afterUpdate(() => {
 			restoreScroll(previousScrollState)
@@ -555,7 +570,7 @@
 				location:    newLoc.location,
 				querystring: newLoc.querystring,
 				userData:    routesList[i].userData,
-				params:      (match && typeof match == "object" && Object.keys(match).length) ? match : null
+				params:      (match && typeof match == 'object' && Object.keys(match).length) ? match : null
 			}
 
 			// Check if the route can be loaded - if all conditions succeed
@@ -564,13 +579,13 @@
 				component    = null
 				componentObj = null
 				// Trigger an event to notify the user, then exit
-				dispatchNextTick("conditionsFailed", detail)
+				dispatchNextTick('conditionsFailed', detail)
 				return
 			}
 
 			// Trigger an event to alert that we're loading the route
 			// We need to clone the object on every event invocation so we don't risk the object to be modified in the next tick
-			dispatchNextTick("routeLoading", Object.assign({}, detail))
+			dispatchNextTick('routeLoading', Object.assign({}, detail))
 
 			// If there's a component to show while we're loading the route, display it
 			const obj = routesList[i].component
@@ -584,12 +599,13 @@
 
 					// Trigger the routeLoaded event for the loading component
 					// Create a copy of detail so we don't modify the object for the dynamic route (and the dynamic route doesn't modify our object too)
-					dispatchNextTick("routeLoaded", Object.assign({}, detail, {
+					dispatchNextTick('routeLoaded', Object.assign({}, detail, {
 						component: component,
 						name:      component.name,
 						params:    componentParams
 					}))
-				} else {
+				}
+				else {
 					component    = null
 					componentObj = null
 				}
@@ -610,9 +626,10 @@
 
 			// Set componentParams only if we have a match, to avoid a warning similar to `<Component> was created with unknown prop 'params'`
 			// Of course, this assumes that developers always add a "params" prop when they are expecting parameters
-			if (match && typeof match == "object" && Object.keys(match).length) {
+			if (match && typeof match == 'object' && Object.keys(match).length) {
 				componentParams = match
-			} else {
+			}
+			else {
 				componentParams = null
 			}
 
@@ -621,7 +638,7 @@
 
 			// Dispatch the routeLoaded event then exit
 			// We need to clone the object on every event invocation so we don't risk the object to be modified in the next tick
-			dispatchNextTick("routeLoaded", Object.assign({}, detail, {
+			dispatchNextTick('routeLoaded', Object.assign({}, detail, {
 				component: component,
 				name:      component.name,
 				params:    componentParams
@@ -639,6 +656,6 @@
 
 	onDestroy(() => {
 		unsubscribeLoc()
-		popStateChanged && window.removeEventListener("popstate", popStateChanged)
+		popStateChanged && window.removeEventListener('popstate', popStateChanged)
 	})
 </script>

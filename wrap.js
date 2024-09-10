@@ -41,13 +41,13 @@
  */
 export function wrap(args) {
 	if (!args) {
-		throw Error("Parameter args is required")
+		throw Error('Parameter args is required')
 	}
 
 	// We need to have one and only one of component and asyncComponent
 	// This does a "XNOR"
 	if (!args.component == !args.asyncComponent) {
-		throw Error("One and only one of component and asyncComponent is required")
+		throw Error('One and only one of component and asyncComponent is required')
 	}
 
 	// If the component is not async, wrap it into a function returning a Promise
@@ -56,8 +56,8 @@ export function wrap(args) {
 	}
 
 	// Parameter asyncComponent and each item of conditions must be functions
-	if (typeof args.asyncComponent != "function") {
-		throw Error("Parameter asyncComponent must be a function")
+	if (typeof args.asyncComponent != 'function') {
+		throw Error('Parameter asyncComponent must be a function')
 	}
 	if (args.conditions) {
 		// Ensure it's an array
@@ -65,8 +65,8 @@ export function wrap(args) {
 			args.conditions = [args.conditions]
 		}
 		for (let i = 0; i < args.conditions.length; i++) {
-			if (!args.conditions[i] || typeof args.conditions[i] != "function") {
-				throw Error("Invalid parameter conditions[" + i + "]")
+			if (!args.conditions[i] || typeof args.conditions[i] != 'function') {
+				throw Error('Invalid parameter conditions[' + i + ']')
 			}
 		}
 	}

@@ -97,6 +97,10 @@ export type LinkActionOpts = {
 	href?: string
 	/** If true, link is disabled */
 	disabled?: boolean
+	/**
+	 * If true, link will replace instead of push new history entry
+	 */
+	replace?: boolean
 }
 
 /** Type for the update function of the link action */
