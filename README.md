@@ -1,19 +1,33 @@
-<table>
-  <tr>
-    <td>
-      <a href="https://www.amazon.com/dp/B08D6T6BKS/"><img src="https://static.packt-cdn.com/products/9781839213625/cover/smaller" width="120" /></a>
-    </td>
-    <td>
-      <h3>Svelte 3 Up and Running</h3>
-      <p>Want to learn Svelte 3 and how to build a Single-Page App (SPA) with it (and with this router)? Check out my book <a href="https://www.amazon.com/dp/B08D6T6BKS/">Svelte 3 Up and Running</a> on Amazon.</p>
-    </td>
-</table>
-
 # svelte-spa-router
+> This is a fork of [ItalyPaleAle/svelte-spa-router](https://github.com/ItalyPaleAle/svelte-spa-router).
+> This fork adds option to not use hash-based routing and instead leverage `History`'s `pushState`/`replaceState`
 
-[![Build Status](https://github.com/ItalyPaleAle/svelte-spa-router/workflows/Continuous%20Integration%20tests/badge.svg)](https://github.com/ItalyPaleAle/svelte-spa-router/actions)
-[![npm](https://img.shields.io/npm/v/svelte-spa-router.svg)](https://www.npmjs.com/package/svelte-spa-router)
-[![GitHub](https://img.shields.io/github/license/ItalyPaleAle/svelte-spa-router.svg)](https://github.com/ItalyPaleAle/svelte-spa-router/blob/master/LICENSE.md)
+## No hash routing
+To configure library to not use hash routing, you need to set config before App initializes (in `main.js/ts`):
+
+### Config preparation
+```javascript
+import {HashRoutingEnabled, BasePath} from "@keenmate/svelte-spa-router"
+
+HashRoutingEnabled.set(false)
+BasePath.set(import.meta.env.BASE_URL)
+```
+
+### Usage
+The trick is in a mandatory use of `use:link` on HTML links to augment these links to call `pushState`/`replaceState` instead of actual navigation
+As a bonus, it automatically prepends `BasePath` value to these links if it is not already present
+
+```html
+<a href="/home" use:link>
+  Link to home
+</a>
+
+<a href="/about" use:link>
+  Link to about
+</a>
+```
+
+## Original README
 
 This module is a router for [Svelte 3 and 4](https://github.com/sveltejs/svelte) applications, specifically optimized
 for Single Page Applications (SPA).
