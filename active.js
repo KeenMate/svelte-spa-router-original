@@ -1,6 +1,6 @@
 import {parse} from "regexparam"
-import {loc} from "./Router.svelte"
-import {BasePath, HashRoutingEnabled} from "./constants.js"
+import {BasePath, HashRoutingEnabled, loc} from "./Router.svelte"
+import {get} from "svelte/store"
 
 // List of nodes to update
 const nodes = []
@@ -53,6 +53,8 @@ loc.subscribe((value) => {
  * @returns {{destroy: function(): void}} Destroy function
  */
 export default function active(node, opts) {
+	const basePath = get(BasePath)
+
 	// Check options
 	if (opts && (typeof opts == "string" || (typeof opts == "object" && opts instanceof RegExp))) {
 		// Interpret strings and regular expressions as opts.path
@@ -68,13 +70,13 @@ export default function active(node, opts) {
 	if (!opts.path && node.hasAttribute("href")) {
 		opts.path = node.getAttribute("href")
 
-		if (HashRoutingEnabled) {
+		if (get(HashRoutingEnabled)) {
 			if (opts.path && opts.path.length > 1 && opts.path.charAt(0) == "#") {
 				opts.path = opts.path.substring(1)
 			}
 		} else {
-			if (opts.path.startsWith(BasePath)) {
-				opts.path = opts.path.substring(BasePath.length)
+			if (opts.path.startsWith(basePath)) {
+				opts.path = opts.path.substring(basePath.length)
 			}
 		}
 	}

@@ -1,8 +1,11 @@
 <script context="module">
-	import {derived, readable, writable} from "svelte/store"
+	import {derived, get, readable, writable} from "svelte/store"
 	import {tick} from "svelte"
-	import {BasePath, HashRoutingEnabled, SvelteSPARouterNavigationEvent} from "./constants.js"
+	import {SvelteSPARouterNavigationEvent} from "./constants.js"
 	import {joinPaths} from "./helpers/url-helpers.js"
+
+	export const HashRoutingEnabled = writable(true)
+	export const BasePath           = writable("/")
 
 	/**
 	 * Returns the current location from the hash.
@@ -11,20 +14,22 @@
 	 * @private
 	 */
 	function getLocation() {
+		const hashRoutingEnabled = get(HashRoutingEnabled)
+		const basePath = get(BasePath)
 		let location
 
-		if (HashRoutingEnabled) {
+		if (hashRoutingEnabled) {
 			const hashPosition = window.location.href.indexOf("#/")
 			location           = (hashPosition > -1) ?
 				window.location.href.substr(hashPosition + 1) :
 				"/"
 		} else {
-			const startsWithPrefix = window.location.pathname.startsWith(BasePath)
-			if (!HashRoutingEnabled && !startsWithPrefix) {
-				throw new Error(`Hash routing disabled and location: "${window.location.href}" does not start with expected base path: "${BasePath}"`)
+			const startsWithPrefix = window.location.pathname.startsWith(basePath)
+			if (!hashRoutingEnabled && !startsWithPrefix) {
+				throw new Error(`Hash routing disabled and location: "${window.location.href}" does not start with expected base path: "${get(BasePath)}"`)
 			}
 
-			location = "/" + window.location.pathname.substring(BasePath.length)
+			location = "/" + window.location.pathname.substring(basePath.length)
 		}
 
 		// Check if there's a querystring
@@ -47,7 +52,7 @@
 		function start(set) {
 			set(getLocation())
 
-			const eventName = HashRoutingEnabled ?
+			const eventName = get(HashRoutingEnabled) ?
 				"hashchange" :
 				SvelteSPARouterNavigationEvent
 			console.log("Setting loc")
@@ -119,7 +124,10 @@
 	}
 
 	async function jediForcePush(location, shouldReplace = false) {
-		if (HashRoutingEnabled) {
+		const hashRoutingEnabled = get(HashRoutingEnabled)
+		const basePath = get(BasePath)
+
+		if (hashRoutingEnabled) {
 			if (!location || location.length < 1 || !/^(\/|#\/)/.test(location)) {
 				throw Error("Invalid parameter location")
 			}
@@ -142,7 +150,7 @@
 			window.history.replaceState.bind(window.history) :
 			window.history.pushState.bind(window.history)
 
-		if (HashRoutingEnabled) {
+		if (hashRoutingEnabled) {
 			// Note: this will include scroll state in history even when restoreScrollState is false
 			doNavigate(newHistoryState, undefined)
 
@@ -152,8 +160,8 @@
 				window.dispatchEvent(new Event("hashchange"))
 			}
 		} else {
-			if (!location.startsWith(BasePath)) {
-				location = joinPaths(BasePath, location)
+			if (!location.startsWith(basePath)) {
+				location = joinPaths(basePath, location)
 			}
 
 			console.log(
@@ -202,7 +210,7 @@
 
 		updateLink(node, opts)
 
-		if (!HashRoutingEnabled) {
+		if (!get(HashRoutingEnabled)) {
 			node.addEventListener("click", ev => {
 				ev.stopImmediatePropagation()
 				ev.preventDefault()
@@ -210,7 +218,7 @@
 				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
 
 				jediForcePush(node.getAttribute("href"), shouldReplace)
-				window.dispatchEvent(new Event("popstate"))
+				window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
 			}, {capture: true})
 		}
 
@@ -239,9 +247,11 @@
 
 	// Internal function used by the link function
 	function updateLink(node, opts) {
+		const basePath = get(BasePath)
+
 		let href = opts.href || node.getAttribute("href")
 
-		if (HashRoutingEnabled) {
+		if (get(HashRoutingEnabled)) {
 			if (href && href.charAt(0) == "/") {
 				// Add # to the href attribute
 				href = "#" + href
@@ -249,8 +259,8 @@
 				throw Error("Invalid value for \"href\" attribute: " + href)
 			}
 		} else {
-			if (href && !href.startsWith(BasePath)) {
-				href = joinPaths(BasePath, href)
+			if (href && !href.startsWith(basePath)) {
+				href = joinPaths(basePath, href)
 			}
 		}
 
