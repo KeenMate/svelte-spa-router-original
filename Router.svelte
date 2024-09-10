@@ -222,14 +222,16 @@
 
 		if (!get(HashRoutingEnabled)) {
 			node.addEventListener("click", ev => {
+				ev.stopImmediatePropagation()
+				ev.preventDefault()
+
 				const linkTarget = ev.target.getAttribute("target")
 				if (linkTarget && linkTarget !== "_self") {
 					// prevent pushState when link is perhaps going outside of this window
+					window.open(node.getAttribute("href"), linkTarget)
+
 					return
 				}
-
-				ev.stopImmediatePropagation()
-				ev.preventDefault()
 
 				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
 
