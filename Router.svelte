@@ -220,26 +220,6 @@
 
 		updateLink(node, opts)
 
-		if (!get(HashRoutingEnabled)) {
-			node.addEventListener("click", ev => {
-				ev.stopImmediatePropagation()
-				ev.preventDefault()
-
-				const linkTarget = ev.target.getAttribute("target")
-				if (linkTarget && linkTarget !== "_self") {
-					// prevent pushState when link is perhaps going outside of this window
-					window.open(node.getAttribute("href"), linkTarget)
-
-					return
-				}
-
-				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
-
-				jediForcePush(node.getAttribute("href"), shouldReplace)
-				// window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
-			}, {capture: true})
-		}
-
 		return {
 			update(updated) {
 				updated = linkOpts(updated)
@@ -286,11 +266,35 @@
 		}
 
 		node.setAttribute("href", href)
-		node.addEventListener("click", (event) => {
-			// Prevent default anchor onclick behaviour
-			event.preventDefault()
-			if (!opts.disabled) {
-				scrollstateHistoryHandler(event.currentTarget.getAttribute("href"))
+		node.addEventListener("click", ev => {
+			if (get(HashRoutingEnabled)) {
+				// Prevent default anchor onclick behaviour
+				ev.preventDefault()
+				if (!opts.disabled) {
+					scrollstateHistoryHandler(ev.currentTarget.getAttribute("href"))
+				}
+			} else {
+				console.log("Handling link click event")
+				const linkTarget = ev.target.getAttribute("target")
+				if (linkTarget && linkTarget !== "_self") {
+					console.log("Link has special target attr, opening href instead")
+					// prevent pushState when link is perhaps going outside of this window
+					window.open(node.getAttribute("href"), linkTarget)
+
+					return
+				}
+				if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
+					console.log("Modifier key has been held while opening link, keeping behaviour intact")
+					return
+				}
+
+				console.log("Custom link operation is in place")
+				ev.preventDefault()
+
+				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
+
+				jediForcePush(node.getAttribute("href"), shouldReplace)
+				// window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
 			}
 		})
 	}
