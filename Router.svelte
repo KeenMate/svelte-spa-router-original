@@ -274,21 +274,22 @@
 					scrollstateHistoryHandler(ev.currentTarget.getAttribute("href"))
 				}
 			} else {
-				console.log("Handling link click event")
+				// console.log("Handling link click event")
 				const linkTarget = ev.target.getAttribute("target")
 				if (linkTarget && linkTarget !== "_self") {
-					console.log("Link has special target attr, opening href instead")
+					// console.log("Link has special target attr, opening href instead")
+					ev.preventDefault()
 					// prevent pushState when link is perhaps going outside of this window
 					window.open(node.getAttribute("href"), linkTarget)
 
 					return
 				}
 				if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
-					console.log("Modifier key has been held while opening link, keeping behaviour intact")
+					// console.log("Modifier key has been held while opening link, keeping behaviour intact")
 					return
 				}
 
-				console.log("Custom link operation is in place")
+				// console.log("Custom link operation is in place")
 				ev.preventDefault()
 
 				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
