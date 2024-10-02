@@ -40,10 +40,10 @@
 			}
 
 			location = "/" + window.location.pathname.substring(basePath.length).replace(/^\//, "")
-			// console.log("SAPA ROUTER Parsing querystring", window.location.search)
 			if (window.location.search) {
 				querystring = window.location.search.substring(1)
 			}
+			console.log("SPA router getting location", window.location, location, querystring)
 		}
 
 		return {location, querystring}
@@ -54,15 +54,14 @@
 	 */
 	export const loc = readable(
 		null,
-		// eslint-disable-next-line prefer-arrow-callback
-		function start(set) {
+		set => {
 			set(getLocation())
 
 			const eventName = get(HashRoutingEnabled) ?
 				"hashchange" :
 				SvelteSPARouterNavigationEvent
 			// console.log("Setting loc")
-			const update = () => {
+			const update    = () => {
 				console.log("Updating location", getLocation())
 				set(getLocation())
 			}
@@ -167,24 +166,25 @@
 			else {
 				window.dispatchEvent(new Event("hashchange"))
 			}
-		} else {
-			if (location_ !== get(location)) {
-				if (!location_.startsWith(basePath)) {
-					location_ = joinPaths(basePath, location_)
-				}
-
-				// console.log(
-				// 	"Before navigate",
-				// 	window.history,
-				// 	window.history.pushState,
-				// 	doNavigate,
-				// 	newHistoryState,
-				// 	undefined,
-				// 	location_
-				// )
-				// window.history.pushState(newHistoryState, undefined, location)
-				doNavigate(newHistoryState, undefined, location_)
+		}
+		else {
+			// console.log("get(location)", get(location))
+			// if (location_ !== get(location)) {
+			if (!location_.startsWith(basePath)) {
+				location_ = joinPaths(basePath, location_)
 			}
+
+			console.log(
+				"Before navigate",
+				window.history,
+				doNavigate,
+				newHistoryState,
+				undefined,
+				location_
+			)
+			// window.history.pushState(newHistoryState, undefined, location)
+			doNavigate(newHistoryState, undefined, location_)
+			// }
 
 			window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
 		}
@@ -273,7 +273,8 @@
 				if (!opts.disabled) {
 					scrollstateHistoryHandler(ev.currentTarget.getAttribute("href"))
 				}
-			} else {
+			}
+			else {
 				// console.log("Handling link click event")
 				const linkTarget = ev.target.getAttribute("target")
 				if (linkTarget && linkTarget !== "_self") {
