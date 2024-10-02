@@ -44,12 +44,14 @@
 		"spa"
 	],
 	"author": "Alessandro Segala (@ItalyPaleAle)",
+	"contributors": [
+		"Filip Jakab (@FilipJakab)"
+	],
 	"license": "MIT",
-	"funding": "https://github.com/sponsors/ItalyPaleAle",
 	"bugs": {
-		"url": "https://github.com/ItalyPaleAle/svelte-spa-router/issues"
+		"url": "https://github.com/KeenMate/svelte-spa-router/issues"
 	},
-	"homepage": "https://github.com/ItalyPaleAle/svelte-spa-router#readme",
+	"homepage": "https://github.com/KeenMate/svelte-spa-router#readme",
 	"dependencies": {
 		"regexparam": "2.0.2"
 	},
