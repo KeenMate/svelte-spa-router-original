@@ -43,7 +43,7 @@
 			if (window.location.search) {
 				querystring = window.location.search.substring(1)
 			}
-			console.log("SPA router getting location", window.location, location, querystring)
+			// console.log("SPA router getting location", window.location, location, querystring)
 		}
 
 		return {location, querystring}
@@ -62,7 +62,7 @@
 				SvelteSPARouterNavigationEvent
 			// console.log("Setting loc")
 			const update    = () => {
-				console.log("Updating location", getLocation())
+				// console.log("Updating location", getLocation())
 				set(getLocation())
 			}
 			window.addEventListener(eventName, update, false)
@@ -174,14 +174,14 @@
 				location_ = joinPaths(basePath, location_)
 			}
 
-			console.log(
-				"Before navigate",
-				window.history,
-				doNavigate,
-				newHistoryState,
-				undefined,
-				location_
-			)
+			// console.log(
+			// 	"Before navigate",
+			// 	window.history,
+			// 	doNavigate,
+			// 	newHistoryState,
+			// 	undefined,
+			// 	location_
+			// )
 			// window.history.pushState(newHistoryState, undefined, location)
 			doNavigate(newHistoryState, undefined, location_)
 			// }
