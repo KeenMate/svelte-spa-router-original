@@ -218,14 +218,16 @@
 			throw Error("Action 'link' can only be used with <a> tags")
 		}
 
-		updateLink(node, opts)
-
-		return {
+		const self = {
 			update(updated) {
 				updated = linkOpts(updated)
-				updateLink(node, updated)
+				updateLink.call(this, node, updated)
 			}
 		}
+
+		updateLink.call(self, node, opts)
+
+		return self
 	}
 
 	/**
@@ -266,39 +268,46 @@
 		}
 
 		node.setAttribute("href", href)
-		node.addEventListener("click", ev => {
-			if (get(HashRoutingEnabled)) {
-				// Prevent default anchor onclick behaviour
-				ev.preventDefault()
-				if (!opts.disabled) {
-					scrollstateHistoryHandler(ev.currentTarget.getAttribute("href"))
-				}
+
+		if (this.specialOnLinkClicked) {
+			node.removeEventListener("click", this.specialOnLinkClicked)
+		}
+		this.specialOnLinkClicked = ev => onLinkClicked(ev, node, opts)
+		node.addEventListener("click", this.specialOnLinkClicked)
+	}
+
+	function onLinkClicked(ev, node, opts) {
+		if (get(HashRoutingEnabled)) {
+			// Prevent default anchor onclick behaviour
+			ev.preventDefault()
+			if (!opts.disabled) {
+				scrollstateHistoryHandler(ev.currentTarget.getAttribute("href"))
 			}
-			else {
-				// console.log("Handling link click event")
-				const linkTarget = ev.target.getAttribute("target")
-				if (linkTarget && linkTarget !== "_self") {
-					// console.log("Link has special target attr, opening href instead")
-					ev.preventDefault()
-					// prevent pushState when link is perhaps going outside of this window
-					window.open(node.getAttribute("href"), linkTarget)
-
-					return
-				}
-				if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
-					// console.log("Modifier key has been held while opening link, keeping behaviour intact")
-					return
-				}
-
-				// console.log("Custom link operation is in place")
+		}
+		else {
+			// console.log("Handling link click event")
+			const linkTarget = ev.target.getAttribute("target")
+			if (linkTarget && linkTarget !== "_self") {
+				// console.log("Link has special target attr, opening href instead")
 				ev.preventDefault()
+				// prevent pushState when link is perhaps going outside of this window
+				window.open(node.getAttribute("href"), linkTarget)
 
-				const shouldReplace = typeof opts !== "string" && opts.shouldReplace
-
-				jediForcePush(node.getAttribute("href"), shouldReplace)
-				// window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
+				return
 			}
-		})
+			if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
+				// console.log("Modifier key has been held while opening link, keeping behaviour intact")
+				return
+			}
+
+			// console.log("Custom link operation is in place")
+			ev.preventDefault()
+
+			const shouldReplace = typeof opts !== "string" && opts.shouldReplace
+
+			jediForcePush(node.getAttribute("href"), shouldReplace)
+			// window.dispatchEvent(new Event(SvelteSPARouterNavigationEvent))
+		}
 	}
 
 	// Internal function that ensures the argument of the link action is always an object
