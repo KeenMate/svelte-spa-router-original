@@ -250,7 +250,7 @@
 	function updateLink(node, opts) {
 		const basePath = get(BasePath)
 
-		let href = opts.href || node.getAttribute("href")
+		let href = opts.href || node.dataset["href"]
 
 		if (get(HashRoutingEnabled)) {
 			if (href && href.charAt(0) == "/") {
