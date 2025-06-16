@@ -218,11 +218,11 @@
 			throw Error("Action 'link' can only be used with <a> tags")
 		}
 
-		const self = {
-			update(updated) {
-				updated = linkOpts(updated)
-				updateLink.call(this, node, updated)
-			}
+		const self = {}
+
+		self.update = function(updated) {
+			updated = linkOpts(updated)
+			updateLink.call(self, node, updated)
 		}
 
 		updateLink.call(self, node, opts)
