@@ -1,7 +1,7 @@
 > [!WARNING]
 > **This library is no longer being developed or supported in any way.**
 >
-> We have replaced it with **[@keenmate/svelte-spa-router](https://github.com/keenmate/svelte-spa-router), a Svelte 5 continuation of original svelte-spa-router, with permissions check, typescript definitions and so on.
+> We have replaced it with **[@keenmate/svelte-spa-router](https://github.com/keenmate/svelte-spa-router)**, a Svelte 5 continuation of original svelte-spa-router, with permissions check, typescript definitions and so on.
 
 
 <table>
